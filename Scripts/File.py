@@ -75,6 +75,11 @@ def common(path,suffix):
 def bt_classify(path):
     common(path,'')
     
+def cha(content):
+    if not '"' in content or not "'" in content:
+        return "%s"%content
+    else:
+        return content
 
 #可以获取到目录的名字
 def main():
@@ -88,8 +93,14 @@ def main():
     #下面是分离路径的list
     path = sys.argv[1]
     print(path)
-    if sys.argv[2] != 1:
-        bt_classify(path)
+    try:
+        a = sys.argv[2] != 1
+            # bt_classify(path)
+    except:
+        pass
+    else:
+        if a != 1:
+            bt_classify(path)
 
     path_list = path.split('/')
 
@@ -99,6 +110,7 @@ def main():
             break
     #下面把名字通过.分开
     path = path
+    #这里不要加冒号，其实好想加了也无所谓，看111行
     name_list = name.split('.')
 
     suffix = name_list[len(name_list)-1].lower().split('"')[0]
@@ -148,6 +160,8 @@ def main():
                         word = try_to_match.group()
                     except:
                         name_split = name_split.split('[')[0]
+                    else:
+                        name_split = loopup(word,'zh')
                 else:
                     
                     name_split = loopup(word,'zh')
@@ -163,15 +177,16 @@ def main():
     else:
         finalDirName = name_split+'.'+year
     
-
-    command = 'rclone sync'+' '+path+' '+'gdrive:'+DATA_gdrive['film']+finalDirName+'/'
+    #path要加冒号
+    
+    command = 'rclone sync'+' '+cha(path)+' '+'gdrive:'+DATA_gdrive['film']+finalDirName+'/'
     a = exec_shell(command)
     if a:
         log('Sync file to google drive successfully!' )
     else:
         log('Sync file to google drive error!' )
     # print(command)
-    command = 'rclone move' + ' ' + path+' '+'onedrive:'+DATA_onedrive['film']+finalDirName+'/'
+    command = 'rclone move' + ' ' + cha(path)+' '+'onedrive:'+DATA_onedrive['film']+finalDirName+'/'
     a = exec_shell(command)
     if a:
         log('Sync file to onedrive successfully!' )
