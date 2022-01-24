@@ -1,10 +1,14 @@
 from fnmatch import translate
 import os
+from sqlite3 import DatabaseError
 import sys
 import subprocess
 import re
 import requests
+import logging
 import hashlib
+
+# logging.basicConfig(filename='/root/file.log',encoding='utf-8',level=logging.warning)
 
 DATA = {
     'downloadDir':'/var/www/html/downloads/',
@@ -24,6 +28,19 @@ def wkDir():
     cu_path = os.getcwd()
     if cu_path != '/root':
         os.chdir('/root')
+
+
+
+
+
+def clean_up():
+    path = DATA['downloadDir']
+    g = os.walk(path)
+    for p,dr,fl in g:
+        for f in fl:
+            if f.endswith('.aria2'):
+                os.remove(f)
+
 
 def loopup(word,language):
     url = "https://fanyi-api.baidu.com/api/trans/vip/translate"
@@ -45,7 +62,7 @@ def loopup(word,language):
     return r.json()['trans_result'][0]['dst']
 
 def log(mesg):
-    with open('/root/file.log','a') as f:
+    with open('/root/file.log','r') as f:
         print(mesg,file=f,flush=True)
 
 def exec_shell(command):
@@ -53,7 +70,7 @@ def exec_shell(command):
     return rt.returncode
 
 
-def common(path,suffix):
+def common(path,suffix=''):
     command = "rclone sync" +' '+path+' '+'gdrive:'+DATA_gdrive['download']+'/'+suffix
     a = exec_shell(command)
     if a == 0:
@@ -70,47 +87,39 @@ def common(path,suffix):
     else:
         log('Sync file to onedrive error,code =%s'%a )
             # print(command)
+    
     exit(0)
 
-def bt_classify(path):
-    common(path,'')
-    
-def cha(content):
-    if not '"' in content or not "'" in content:
-        return "%s"%content
-    else:
-        return content
 
-#可以获取到目录的名字
-def main():
-    year = ''
-    name = ''
-    
-    if len(sys.argv) < 2 or sys.argv[1] == '':
-        exit(1)
-    
-    # path = sys.argv[1]
-    #下面是分离路径的list
-    path = sys.argv[1]
-    print(path)
-    try:
-        a = sys.argv[2] != 1
-            # bt_classify(path)
-    except:
-        pass
-    else:
-        if a != 1:
-            bt_classify(path)
 
-    path_list = path.split('/')
+def downlaodPathUpload(path):
+    clean_up()
+    g = os.walk(path)
+    for pa,dr,fl in g:
+        for f in fl:
+            name = fl
+            path = pa+'/'+fl
+            file(name,path)
 
-    for n in reversed(path_list):
-        if "." in n:
-            name = n
-            break
+
+
+def dir_consider(path):
+    if path == DATA['downloadDir']:
+        downlaodPathUpload()
+    # g = os.walk(path)
+    # for pa,dr,fl in g:
+        
+
+
+
+
+
+
+def file(name,path):
+    #这里的path是指加上文件名的path
     #下面把名字通过.分开
-    path = path
-    #这里不要加冒号，其实好想加了也无所谓，看111行
+    # path = path
+    #这里不要加冒号，其实应该加了也无所谓
     name_list = name.split('.')
 
     suffix = name_list[len(name_list)-1].lower().split('"')[0]
@@ -196,6 +205,45 @@ def main():
     
 
 
+def cha(content):
+    if not '"' in content or not "'" in content:
+        return '"%s"'%content
+    else:
+        return content
+
+#可以获取到目录的名字
+def main():
+    year = ''
+    name = ''
+    
+    if len(sys.argv) < 2 or sys.argv[1] == '':
+        exit(1)
+    
+    # path = sys.argv[1]
+    #下面是需要分离的路径
+    path = sys.argv[1]
+    
+
+    #通过判断文件路径是否为文件夹来区分
+    if os.path.isdir(path):
+        # clean_up()
+        # common(path)
+        pass
+        
+
+    print(path)
+
+    path_list = path.split('/')
+
+    for n in reversed(path_list):
+        if "." in n:    #如果名字里有.则判断为视频文件
+            name = n
+            break
+
+    file(name,path)
 
 
 main()
+
+# if __name__ == '__main__':
+#     print('yes')
