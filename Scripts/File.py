@@ -4,6 +4,7 @@ from sqlite3 import DatabaseError
 import sys
 import subprocess
 import re
+from tabnanny import check
 import requests
 import logging
 import hashlib
@@ -30,8 +31,24 @@ def wkDir():
         os.chdir('/root')
 
 
-
-
+def check_log_file():
+    if os.path.exists('/root/file.log'):
+        os.remove('/root/file.log')
+        os.popen('touch /root/file.log')
+# 既可以判断执行是否成功，还可以获取执行结果
+def subprocess_popen(statement):
+    p = subprocess.Popen(statement, shell=True, stdout=subprocess.PIPE)  # 执行shell语句并定义输出格式
+    while p.poll() is None:  # 判断进程是否结束（Popen.poll()用于检查子进程（命令）是否已经执行结束，没结束返回None，结束后返回状态码）
+        if p.wait() is not 0:  # 判断是否执行成功（Popen.wait()等待子进程结束，并返回状态码；如果设置并且在timeout指定的秒数之后进程还没有结束，将会抛出一个TimeoutExpired异常。）
+            print("命令执行失败，请检查设备连接状态")
+            return False
+        else:
+            re = p.stdout.readlines()  # 获取原始执行结果
+            result = []
+            for i in range(len(re)):  # 由于原始结果需要转换编码，所以循环转为utf8编码并且去除\n换行
+                res = re[i].decode('utf-8').strip('\r\n')
+                result.append(res)
+            return result
 
 def clean_up():
     path = DATA['downloadDir']
@@ -39,7 +56,7 @@ def clean_up():
     for p,dr,fl in g:
         for f in fl:
             if f.endswith('.aria2'):
-                os.remove(f)
+                os.remove(p+f)
 
 
 def loopup(word,language):
@@ -62,7 +79,10 @@ def loopup(word,language):
     return r.json()['trans_result'][0]['dst']
 
 def log(mesg):
-    with open('/root/file.log','r') as f:
+    # path = '/root/file.log'
+    
+
+    with open('/root/file.log','a') as f:
         print(mesg,file=f,flush=True)
 
 def exec_shell(command):
@@ -71,9 +91,10 @@ def exec_shell(command):
 
 
 def common(path,suffix=''):
+    check_log_file()
     command = "rclone sync" +' '+path+' '+'gdrive:'+DATA_gdrive['download']+'/'+suffix
-    a = exec_shell(command)
-    if a == 0:
+    a = subprocess_popen(command)
+    if a != False:
         log('Sync file to google drive successfully!' )
     else:
         log('Sync file to google drive error,code =%s'%a )
@@ -81,8 +102,8 @@ def common(path,suffix=''):
     # print(command)
     
     command = 'rclone move'+' '+ path + ' '+ 'onedrive:'+DATA_onedrive['download']+'/'+suffix
-    a = exec_shell(command)
-    if a == 0:
+    a = subprocess_popen(command)
+    if a != False:
         log('Sync file to onedrive successfully!')
     else:
         log('Sync file to onedrive error,code =%s'%a )
@@ -116,6 +137,7 @@ def dir_consider(path):
 
 
 def file(name,path):
+    year = ''
     #这里的path是指加上文件名的path
     #下面把名字通过.分开
     # path = path
@@ -187,24 +209,27 @@ def file(name,path):
         finalDirName = name_split+'.'+year
     
     #path要加冒号
-    
+    check_log_file()
     command = 'rclone sync'+' '+cha(path)+' '+'gdrive:'+DATA_gdrive['film']+finalDirName+'/'
-    a = exec_shell(command)
-    if a:
+    a = subprocess_popen(command)
+    if a != False:
         log('Sync file to google drive successfully!' )
     else:
         log('Sync file to google drive error!' )
     # print(command)
     command = 'rclone move' + ' ' + cha(path)+' '+'onedrive:'+DATA_onedrive['film']+finalDirName+'/'
-    a = exec_shell(command)
-    if a:
+    a = subprocess_popen(command)
+    if a != False:
         log('Sync file to onedrive successfully!' )
     else:
         log('Sync file to onedrive error!' )
-    # print(command)
     
+    # print(command)
 
 
+
+
+#根据情况判断是否加双引号
 def cha(content):
     if not '"' in content or not "'" in content:
         return '"%s"'%content
@@ -213,7 +238,6 @@ def cha(content):
 
 #可以获取到目录的名字
 def main():
-    year = ''
     name = ''
     
     if len(sys.argv) < 2 or sys.argv[1] == '':
@@ -241,6 +265,7 @@ def main():
             break
 
     file(name,path)
+    clean_up()
 
 
 main()
