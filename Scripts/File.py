@@ -92,7 +92,7 @@ def exec_shell(command):
 
 def common(path,suffix=''):
     check_log_file()
-    command = "rclone sync" +' '+path+' '+'gdrive:'+DATA_gdrive['download']+'/'+suffix
+    command = "rclone sync" +' '+path+' '+'alist-gdrive:'+DATA_gdrive['download']+'/'+suffix
     a = subprocess_popen(command)
     if a != False:
         log('Sync file to google drive successfully!' )
@@ -210,7 +210,7 @@ def file(name,path):
     
     #path要加冒号
     check_log_file()
-    command = 'rclone sync'+' '+cha(path)+' '+'gdrive:'+DATA_gdrive['film']+finalDirName+'/'
+    command = 'rclone sync'+' '+cha(path)+' '+'alist-gdrive:'+DATA_gdrive['film']+finalDirName+'/'
     a = subprocess_popen(command)
     if a != False:
         log('Sync file to google drive successfully!' )
