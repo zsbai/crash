@@ -18,16 +18,15 @@ elif [ "$platform" = "aarch64" ];then
     ARCH=arm64
 fi
 
-wgethttps://gh-proxy.bailu.workers.dev/Dreamacro/clash/releases/download/${latest_version}/clash-$(uname -s| tr [:upper:] [:lower:])-${ARCH}-${latest}.gz -O clash.gz
+wget https://gh-proxy.bailu.workers.dev/Dreamacro/clash/releases/download/${latest_version}/clash-$(uname -s| tr [:upper:] [:lower:])-${ARCH}-${latest_version}.gz -O clash.gz
 if command -v gzip > /dev/null 2>&1; then
-    gzip clash.gz
+    gzip -d clash.gz
 else
     apt-get install gzip -y
     gzip clash.gz
 fi
 mv clash /usr/local/bin/clash
 chmod +x /usr/local/bin/clash
-rm clash.gz
 
 clash -v
 echo "clash installed"
