@@ -45,6 +45,4 @@ WantedBy=multi-user.target
 EOF
 systemctl daemon-reload
 systemctl enable clash
-systemctl start clash >/dev/null 2>&1
-systemctl status clash
-echo "finish"
+echo "systemd created"
