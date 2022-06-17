@@ -1,4 +1,4 @@
-# /bin/bash
+#!/bin/bash
 
 echo "getting latest version.."
 latest_version=`curl -s "https://api.github.com/repos/docker/compose/releases/latest"|grep "tag_name"|head -n 1|awk -F ":" '{print $2}'|sed 's/\"//g;s/,//g;s/ //g'`;
