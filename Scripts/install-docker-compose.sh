@@ -7,4 +7,4 @@ echo "downloading..."
 wget https://github.com/docker/compose/releases/download/${latest_version}/docker-compose-$(uname -s)-$(uname -m) -O /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 docker-compose -v
-echo "docker-compose installed"
+echo "\e[1;31m docker-compose installed \e[0m"
