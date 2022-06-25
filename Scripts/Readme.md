@@ -19,6 +19,10 @@ curl -fsSL https://github.com/zsbai/crash/raw/main/Scripts/install-docker-compos
 ```bash
 curl -fsSL https://gh-proxy.bailu.workers.dev/zsbai/crash/blob/main/Scripts/install-docker-compose-cn.sh -o install-docker-compose-cn.sh | sudo bash install-docker-compose.sh 
 ```
+## Git-Lfs
+```bash
+curl -fsSL https://github.com/zsbai/crash/raw/main/Scripts/install-git-lfs.sh -o install-git-lfs.sh | sudo bash install-git-lfs.sh 
+```
 ## Others
 安装alist：
 ```bash

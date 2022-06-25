@@ -16,7 +16,7 @@ elif [ "$platform" = "aarch64" ];then
     ARCH=arm64
 fi
 
-wget https://github.com/git-lfs/git-lfs/releases/download/${latest_version}/git-lfs-$(uname -s| tr [:upper:] [:lower:])-${ARCHs}-${latest_version}.tar.gz -O lfs.tar.gz
-tar -zxf lfs.tar.gz
-cd lfs && sh install.sh
+wget https://github.com/git-lfs/git-lfs/releases/download/${latest_version}/git-lfs-$(uname -s| tr [:upper:] [:lower:])-${ARCH}-${latest_version}.zip -O lfs.zip
+tar -zxvf lfs.tar.gz
+cd git-lfs-${latest_version} && sh install.sh
 echo "git-lfs installed"
