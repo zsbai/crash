@@ -13,7 +13,6 @@ fi
 
 if [ "$platform" = "x86_64" ];then
     ARCH=amd64
-    NODEJSARCH=x64
 elif [ "$platform" = "aarch64" ];then
     ARCH=arm64
 fi
