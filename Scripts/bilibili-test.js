@@ -19,6 +19,7 @@ try {
     }
 } catch (e) {
     console.log("bilibili_test , " + e)
+    console.log(body.data.items[i].title)
 }
 body = JSON.stringify(body)
 $done({
