@@ -5,6 +5,10 @@ window.location.replace(newurl.textContent)
   </script>"
 
 var rBody = '</body>'
-let body = $response.body
-    .replace(rBody, newJavaScript);
+try {
+  let body = $response.body
+     .replace(rBody, newJavaScript);
+} catch (e) {
+concole.log(e)
+}
 $done({ body });
