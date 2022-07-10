@@ -2,9 +2,9 @@ const url = $request.url;
 let body = JSON.parse($response.body);
 
 try {
-   //如果url不包含splash/list
+   //如果url包含splash/list
     if (url.indexOf('splash\/list') != -1) {
-        let i = body.data.items.length;
+        let i = body.data.list.length;
         while (i--) {
             if (body.data.list[i].is_ad == true) {
                 body.data.list.splice(i, 1);
@@ -14,7 +14,7 @@ try {
         while (i--) {
             body.data.show[i].stime = 0;
             body.data.show[i].etime = 1;
-        }
+        } //如果url包含feed/index
     } else if (url.indexOf('feed\/index') != -1) {
         let i = body.data.items.length;
         while (i--) {
