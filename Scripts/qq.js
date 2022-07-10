@@ -1,8 +1,5 @@
 const url = $request.url;
-let newJavaScript = "<script>
-let newurl = document.evaluate('//*[@id="url"]/text()', document).iterateNext();
-window.location.replace(newurl.textContent)
-  </script>"
+let newJavaScript = '<script type="text/javascript" async="async" src="https://raw.githubusercontent.com/zsbai/crash/master/Scripts/anti_qq.js"></script>'
 
 var rBody = '</body>'
 try {
