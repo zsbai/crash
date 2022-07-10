@@ -12,6 +12,7 @@ try {
             body.data.items[i].title.indexOf('奶茶') != -1 ||
             body.data.items[i].title.indexOf('小由') != -1) {
                 body.data.items.splice(i,1);
+                console.log(body.data.items[i].title)
 
             }
         }
@@ -19,7 +20,7 @@ try {
     }
 } catch (e) {
     console.log("bilibili_test , " + e)
-    console.log(body.data.items[i].title)
+    
 }
 body = JSON.stringify(body)
 $done({
